@@ -1,0 +1,84 @@
+{
+    "langs": ["en", "ru"],
+    "version": "0.0.1",
+    "forms": [
+        {
+            "type": "list",
+            "name": ["Process repair card", "Карта Ремонтного процесса"],
+            "fields": [
+                {
+                    "name": ["Project:", "Проект:"],
+                    "tag": "requestNumber",
+                    "type": "text"
+                },
+                {
+                    "name": ["Description:", "Описание:"],
+                    "tag": "tagNumber",
+                    "type": "text"
+                },
+                {
+                    "name": ["Name:", "Название:"],
+                    "tag": "name",
+                    "type": "text",
+                    "value": "Rinat Khalimov"
+                },
+                {
+                    "name": ["Date:", "Дата:"],
+                    "tag": "date_tag",
+                    "type": "date"
+                },
+                {
+                    "name": ["Manufacturer:", "Производитель:"],
+                    "tag": "manufacturer",
+                    "type": "text"
+                },
+                {
+                    "name": ["Voltage:", "Напряжение:"],
+                    "tag": "voltage",
+                    "type": "float",
+                    "dropdown": "V",
+                    "dvalue": 1
+                },
+                {
+                    "name": ["Rotor voltage:", "Напряжение ротора:"],
+                    "tag": "rotor_voltage",
+                    "type": "float",
+                    "dropdown": "V",
+                    "dvalue": 1
+                },
+                {
+                    "name": ["Rotor current:", "Ток ротора:"],
+                    "tag": "rotor_current",
+                    "type": "float",
+                    "dropdown": "A",
+                    "dvalue": 0
+                },
+                {
+                    "name": ["Current:", "Ток:"],
+                    "tag": "current",
+                    "type": "float",
+                    "dropdown": "A",
+                    "dvalue": 2
+                }
+            ]
+        },
+        {
+            "type": "table",
+            "name": ["Completed works", "Выполненные работы"],
+            "cols": [
+                ["Repaired/ Replaced", "Подготовил", "repaired"],
+                ["Modified", "Изменен", "modified"],
+                ["Comments", "Примечание", "comments"],
+                ["Completed by/ Date", "Выполнил/ Дата", "completed_by", "DATE"]
+            ],
+            "rows": [
+                ["Stator", "Статор", "stator"],
+                ["Fan", "Вентилятор", "fan"]
+            ]
+        },
+        {
+            "type": "image",
+            "name": ["Upload photo", "Загрузить фото"]
+        }
+    ]
+}
