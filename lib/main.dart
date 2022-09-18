@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/user_documents.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:desktop_window/desktop_window.dart';
-import 'editor.dart';
+// import 'editor.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -57,7 +57,7 @@ class _UserDocumentsState extends State<UserDocuments> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Documents'),
+        title: const Text('My Documents'),
       ),
       body: FutureBuilder(
         future: _getFiles(),
@@ -86,7 +86,7 @@ class _UserDocumentsState extends State<UserDocuments> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) {
-              return const TemplateChooser(title: 'EO Checklists');
+              return const TemplateChooser(title: 'Choose Template');
             }),
           );
         },

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_2/mcoffice.dart';
 import 'package:flutter_application_2/parser.dart';
+import 'package:flutter_application_2/util/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,9 +15,9 @@ import 'editor_form.dart';
 
 // list of forms in json file such as Process repair card, Completed works, Uload photo
 class DocEditor extends StatefulWidget {
-  final String _filename;
+  final String docName;
 
-  const DocEditor(this._filename, {super.key});
+  const DocEditor(this.docName, {super.key});
 
   @override
   State<DocEditor> createState() => _DocEditorState();
@@ -25,30 +26,19 @@ class DocEditor extends StatefulWidget {
 class _DocEditorState extends State<DocEditor> {
   late final Future? futureData;
 
+  Future<Map> _loadDoc() async {
+    var docFolder = await getDocFolder(widget.docName);
+    String docFile =
+        await File('$docFolder/${widget.docName}.json').readAsString();
+    Map data = jsonDecode(docFile);
+    return data;
+  }
+
   @override
   void initState() {
     super.initState();
-    log('initState');
-    futureData = rootBundle
-        .loadString('assets/docx/${widget._filename}.json')
-        .then(((value) {
-      Map data = parseJsonDocument(value, 'en');
-      return data;
-    }));
-    // future = http.get(Uri.parse('https://www.vk.com/'));
+    futureData = _loadDoc();
     log('initState: $futureData');
-  }
-
-  Future<String> _saveDoc() async {
-    var dir = await getApplicationSupportDirectory();
-    var fileFolder = '${dir.path}/';
-    var filePath = '$fileFolder/${widget._filename}.json';
-    var file = File(filePath);
-    var data = await futureData;
-    JsonEncoder encoder = const JsonEncoder.withIndent('  ');
-    file.writeAsString(encoder.convert(data));
-    log('written to file $filePath');
-    return fileFolder;
   }
 
   // save button, preview doc button, share button
@@ -56,34 +46,36 @@ class _DocEditorState extends State<DocEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget._filename),
+        title: Text(widget.docName),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.save,
             ),
-            onPressed: () {
+            onPressed: () async {
               log('save pressed');
-              _saveDoc();
+              var data = await futureData;
+              saveJson(data, widget.docName);
+              // saveDoc(futureData, widget._filename);
             },
           ),
           IconButton(
             onPressed: () async {
               log('preview pressed');
-              var fullFilename = await _saveDoc();
-              var data = await futureData;
-              var docxPath =
-                  await generateDocx(data, fullFilename, widget._filename);
-              log('file generated: $docxPath');
+              // var fullFilename = await saveDoc(futureData, widget._filename);
+              // var data = await futureData;
+              // var docxPath =
+              //     await generateDocx(data, fullFilename, widget._filename);
+              // log('file generated: $docxPath');
             },
-            icon: const Icon(Icons.art_track_outlined),
+            icon: const ImageIcon(AssetImage('assets/images/mcword.png')),
           )
         ],
       ),
       body: WillPopScope(
         onWillPop: () async {
           var data = await futureData;
-          log('finished filling doc: $data');
+          // log('finished filling doc: $data');
           return true;
         },
         child: Center(
@@ -102,7 +94,7 @@ class _DocEditorState extends State<DocEditor> {
                 );
               } else if (snapshot.hasError) {
                 return Text(
-                  'Error loading file ${widget._filename}',
+                  'Error loading file ${widget.docName}',
                   style: const TextStyle(fontSize: 30),
                 );
               } else {
@@ -144,7 +136,7 @@ class FormName extends StatelessWidget {
           ),
         );
       },
-      title: Text(_data['name'], style: textStyle),
+      title: Text(_data['name'][Lang.langIndex], style: textStyle),
       subtitle: Text(_data['type']),
     );
   }

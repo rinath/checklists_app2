@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_application_2/util/constants.dart';
 
 class ListEditor extends StatefulWidget {
   final Map _data;
@@ -25,7 +26,7 @@ class _ListEditorState extends State<ListEditor> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget._data['name']),
+        title: Text(widget._data['name'][Lang.langIndex]),
       ),
       body: ListView(
         padding: const EdgeInsets.all(50),
@@ -55,7 +56,7 @@ class _ListFieldState extends State<ListField> {
       child = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget._data['name']),
+          Text(widget._data['name'][Lang.langIndex]),
           TextFormField(
             textInputAction: TextInputAction.next,
             initialValue: initialValue,
@@ -66,7 +67,7 @@ class _ListFieldState extends State<ListField> {
         ],
       );
     } else {
-      child = Text('Unimplemented ${widget._data['name']}');
+      child = Text('Unimplemented ${widget._data['name'][Lang.langIndex]}');
     }
     return Padding(
       padding: const EdgeInsets.all(8.0),
