@@ -1,0 +1,75 @@
+{
+    "langs": ["en", "ru"],
+    "version": "0.0.1",
+    "dropdown": {
+        "en": {
+            "VXNA": ["V", "X", "N/A"],
+            "V": ["mV", "V", "KV"],
+            "A": ["microA", "mA", "A"]
+        },
+        "ru": {
+            "VXNA": ["V", "X", "N/A"],
+            "V": ["мВ", "В", "КВ"],
+            "A": ["микроА", "мА", "А"]
+        }
+    },
+    "forms": [
+        {
+            "type": "list",
+            "name": ["General info", "Общая информация"],
+            "fields": [
+                {
+                    "name": ["ELECTRICAL TEST CHECKLIST №", "КОНТРОЛЬНЫЕ ВЕДОМОСТИ ИСПЫТАНИЙ ЭЛЕКТРОТЕХНИЧЕСКОГО ОБОРУДОВАНИЯ №"],
+                    "tag": "number",
+                    "type": "text"
+                },
+                {
+                    "name": ["Request №", "Заявка №"],
+                    "tag": "request_no",
+                    "type": "text"
+                },
+                {
+                    "name": ["Equip Title:", "Описание оборудования:"],
+                    "tag": "equip_title",
+                    "type": "text"
+                },
+                {
+                    "name": ["Equip No.:", "Номер оборудования:"],
+                    "tag": "equip_no",
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "type": "list",
+            "name": ["Pre-test check", "Проверка перед испытанием"],
+            "fields": [
+                {
+                    "name": ["Ensure earthing conforms", "Проверить соответствие заземления"],
+                    "tag": "earthing_conforms",
+                    "type": "VXNA"
+                },
+                {
+                    "name": ["Confirm motor protection and control are checked.", "Проверить, что защита электрического двигателя проверен"],
+                    "tag": "motor_conforms",
+                    "type": "VXNA"
+                },
+                {
+                    "name": ["Confirm that the protection relay setting corresponds to the motor current rating.", "Подтвердить, что уставки реле защиты соответствуют номинальному значению тока для данного двигателя"],
+                    "tag": "protection_relay",
+                    "type": "VXNA"
+                },
+                {
+                    "name": ["Confirm motor, heater and associated equipment has been isolated and locked off.", "Подтвердить, что электродвигатель и соответст. оборудование отключено и изолировано"],
+                    "tag": "motor_isolated",
+                    "type": "VXNA"
+                },
+                {
+                    "name": ["Confirm repair of motor are complete.", "Подтвердить завершение ремонта электродвигателя"],
+                    "tag": "repair_complete",
+                    "type": "VXNA"
+                }
+            ]
+        }
+    ]
+}

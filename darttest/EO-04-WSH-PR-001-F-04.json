@@ -1,0 +1,140 @@
+{
+  "langs": [
+    "en",
+    "ru"
+  ],
+  "version": "0.0.1",
+  "dropdown": [
+    {
+      "vxna": [
+        "✓",
+        "✗",
+        "N/A"
+      ]
+    },
+    {
+      "vxna": [
+        "✓",
+        "✗",
+        "N/A"
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "name": [
+        "",
+        ""
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "request_no_1_text",
+          "type": "text"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "equip_title_1_text",
+          "type": "text"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "equip_no_1_text",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": [
+        "",
+        ""
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "earthing_conforms_2_vxna",
+          "type": "vxna"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "motor_protection_2_vxna",
+          "type": "vxna"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "protection_relay_2_vxna",
+          "type": "vxna"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "isolation_2_vxna",
+          "type": "vxna"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "repair_complete_2_vxna",
+          "type": "vxna"
+        }
+      ]
+    },
+    {
+      "name": [
+        "",
+        ""
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "y1_y2_3_float",
+          "type": "float"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "r1_r2_3_float",
+          "type": "float"
+        },
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "g1_g2_3_float",
+          "type": "float"
+        }
+      ]
+    }
+  ]
+}

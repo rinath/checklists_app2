@@ -1,0 +1,7 @@
+name: myapp
+
+environment:
+  sdk: '>=2.10.0 <3.0.0'
+
+dependencies:
+  docx_template: ^0.3.3
