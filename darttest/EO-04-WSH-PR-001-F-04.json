@@ -135,6 +135,23 @@
           "type": "float"
         }
       ]
+    },
+    {
+      "name": [
+        "",
+        ""
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "comments_12_text",
+          "type": "text"
+        }
+      ]
     }
   ]
 }

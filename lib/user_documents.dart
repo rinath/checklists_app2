@@ -2,6 +2,7 @@
 // import 'dart:developer';
 // import 'dart:math';
 
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
@@ -12,72 +13,84 @@ import 'package:flutter/services.dart';
 import 'package:flutter_application_2/mcoffice.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:share_plus/share_plus.dart';
 
 import 'editor.dart';
 
-// import 'editor.dart';
-
-class TemplateChooser extends StatelessWidget {
+class TemplateChooser extends StatefulWidget {
   const TemplateChooser({super.key, required this.title});
 
   final String title;
 
   @override
+  State<TemplateChooser> createState() => _TemplateChooserState();
+}
+
+class _TemplateChooserState extends State<TemplateChooser> {
+  @override
   Widget build(BuildContext context) {
-    var templateNames = ['repair_card', 'repair_card_2', 'repair_card_3'];
-    var children = <Widget>[];
-    for (var templateName in templateNames) {
-      children.add(Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FileWidget(templateName),
-      ));
-    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.scuba_diving),
-        //     onPressed: () async {
-        //       var dir = await getTemporaryDirectory();
-        //       log('temp dir path: ${dir.path}');
-        //     },
-        //   ),
-        // ],
+        title: Text(widget.title),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: children,
+      body: FutureBuilder(
+        future: getDocsList(FolderType.assets),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data as List<Map<String, String>>;
+            var children = <Widget>[];
+            for (var templateName in data) {
+              children.add(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TemplateTile(templateName['docName']!),
+                ),
+              );
+            }
+            if (data.isEmpty) {
+              return const Center(
+                child: Text('No templates found'),
+              );
+            }
+            return ListView(
+              padding: const EdgeInsets.all(8),
+              children: children,
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
 }
 
-// repair_card InkWell tile
-class FileWidget extends StatefulWidget {
+// ex: EO-04-WSH-PR-001-F-04 template tile
+class TemplateTile extends StatefulWidget {
   final String docName;
 
-  const FileWidget(this.docName, {super.key});
+  const TemplateTile(this.docName, {super.key});
 
   @override
-  State<FileWidget> createState() => _FileWidgetState();
+  State<TemplateTile> createState() => _TemplateTileState();
 }
 
-class _FileWidgetState extends State<FileWidget> {
+class _TemplateTileState extends State<TemplateTile> {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.headline6;
-    const shareAction = "share";
-    const downloadAction = "download";
-
     return InkWell(
       onTap: () async {
-        final str = await createDocFolderFromAsset(widget.docName);
-        if (!mounted) {
-          return;
+        final docFolder = await getDocFolder(widget.docName);
+        for (var ext in ['docx', 'json']) {
+          await copyAssetToFolder(
+              'assets/docs/${widget.docName}.$ext', docFolder);
         }
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => DocEditor(widget.docName)));
+        if (!mounted) return;
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DocEditor(docFolder, widget.docName)));
       },
       child: Row(
         children: [
@@ -94,10 +107,80 @@ class _FileWidgetState extends State<FileWidget> {
               size: 48,
             ),
             onPressed: () async {
-              var filePath = 'assets/docx/${widget.docName}.docx';
-              String path = await copyAssetToFolder(filePath);
-              await openInDefaultApp(path);
+              // var generatedFile = await generateDoc(docName);
+              try {
+                final docFolder = await getFolderPath(FolderType.temp);
+                final copiedFile = await copyAssetToFolder(
+                    'assets/docs/${widget.docName}.docx', docFolder);
+                await openInDefaultApp(copiedFile);
+              } on Exception catch (e) {
+                showSnackBar(
+                    context, 'At first close microsoft word application');
+              }
+              // String path = await copyAssetToFolder(filePath);
               log("previewing Word document");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// repair_card InkWell tile
+class FileWidget extends StatefulWidget {
+  final String docName;
+  final String docFolder;
+
+  const FileWidget(this.docFolder, this.docName, {super.key});
+
+  @override
+  State<FileWidget> createState() => _FileWidgetState();
+}
+
+class _FileWidgetState extends State<FileWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.headline6;
+    const shareAction = "share";
+    const downloadAction = "download";
+
+    return InkWell(
+      onTap: () async {
+        // final str = await createDocFolderFromAsset(widget.docName);
+        if (!mounted) {
+          return;
+        }
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DocEditor(widget.docFolder, widget.docName)));
+      },
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(widget.docName, style: textStyle),
+            ),
+          ),
+          IconButton(
+            // icon: const Icon(Icons.delete),
+            icon: const ImageIcon(
+              AssetImage('assets/images/mcword.png'),
+              size: 48,
+            ),
+            onPressed: () async {
+              try {
+                var generatedFile =
+                    await generateDoc(widget.docFolder, widget.docName);
+                await openInDefaultApp(generatedFile);
+                log("previewing Word document");
+              } catch (e) {
+                showSnackBar(
+                    context, 'At fist close microsoft word application');
+              }
             },
           ),
           PopupMenuButton(
@@ -111,15 +194,30 @@ class _FileWidgetState extends State<FileWidget> {
                   break;
               }
             },
-            itemBuilder: (context) => const [
+            itemBuilder: (context) => [
               PopupMenuItem(
                 value: downloadAction,
-                child: Text("Download to this device"),
+                child: const Text("Скачать .docx"),
+                onTap: () async {
+                  final filename =
+                      await generateDoc(widget.docFolder, widget.docName);
+                  await saveFileInDefaultFileManager(filename);
+                },
               ),
-              PopupMenuItem(
-                value: shareAction,
-                child: Text("Share"),
-              ),
+              if (Platform.isAndroid || Platform.isIOS)
+                PopupMenuItem(
+                  value: shareAction,
+                  child: const Text("Отправить .docx"),
+                  onTap: () async {
+                    final filename =
+                        await generateDoc(widget.docFolder, widget.docName);
+                    await shareFile(filename);
+                  },
+                ),
+              // PopupMenuItem(
+              //   value: shareAction,
+              //   child: Text("Отправить .eokz"),
+              // ),
             ],
           ),
         ],

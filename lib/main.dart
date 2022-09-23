@@ -2,16 +2,18 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/mcoffice.dart';
 import 'package:flutter_application_2/user_documents.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:desktop_window/desktop_window.dart';
+import 'package:path/path.dart' as path;
 // import 'editor.dart';
 
 void main() async {
   runApp(const MyApp());
-  if (Platform.isWindows) {
-    await DesktopWindow.setWindowSize(const Size(400, 700));
-  }
+  // if (Platform.isWindows) {
+  //   await DesktopWindow.setWindowSize(const Size(400, 700));
+  // }
 }
 
 class MyApp extends StatelessWidget {
@@ -42,34 +44,47 @@ class UserDocuments extends StatefulWidget {
 class _UserDocumentsState extends State<UserDocuments> {
   Future? directory;
 
-  Future<List<String>> _getFiles() async {
-    var dir = await getApplicationSupportDirectory();
-    log('PATH: ${dir.path}');
-    var files = await dir.list().toList();
-    var result = <String>[];
-    for (var file in files) {
-      result.add(file.path);
-    }
-    return result;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Documents'),
+        title: const Text('Мои документы'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final docsFolder =
+                  path.join(await getFolderPath(FolderType.appdata), 'docs');
+              try {
+                for (var dir in await Directory(docsFolder).list().toList()) {
+                  log('deleting folder: ${dir.path}');
+                  await dir.delete(recursive: true);
+                }
+              } on Exception catch (e) {
+                // print error log:
+                log('error deleting files: $e');
+              }
+              setState(() {});
+            },
+            icon: const Icon(Icons.delete),
+          ),
+        ],
       ),
       body: FutureBuilder(
-        future: _getFiles(),
+        future: getDocsList(FolderType.appdata),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            var files = snapshot.data as List<String>;
+            var files = snapshot.data as List<Map<String, String>>;
+            if (files.isEmpty) {
+              return const Center(child: Text('No documents found'));
+            }
             return ListView.builder(
               itemCount: files.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(files[index]),
-                );
+                // return ListTile(
+                //   title: Text(files[index]),
+                // );
+                return FileWidget(
+                    files[index]['docFolder']!, files[index]['docName']!);
               },
             );
           } else if (snapshot.hasError) {
@@ -86,9 +101,9 @@ class _UserDocumentsState extends State<UserDocuments> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) {
-              return const TemplateChooser(title: 'Choose Template');
+              return const TemplateChooser(title: 'Выберите шаблон');
             }),
-          );
+          ).then((value) => setState(() {}));
         },
         backgroundColor: Colors.red,
         child: const Icon(Icons.add),

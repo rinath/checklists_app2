@@ -25,8 +25,64 @@ List<String> splitAndCheckTag(String tag) {
   return [type, formNumber];
 }
 
+Map tagToForm(String tag, String type) {
+  print('tag: $tag');
+  final tempTag = {
+    "v": ["mv", "v", "kv"],
+    "a": ["ua", "ma", "a"],
+    "ohm": ["uohm", "mohm", "ohm", "kohm", "mohm", "gohm"]
+  };
+  final dropdowns = [
+    {
+      "vxna": ["✓", "✗", "N/A"],
+      "v": ["mV", "V", "KV"],
+      "a": ["µA", "mA", "A"],
+      "Ohm": ["µOhm", "mOhm", "Ohm", "kOhm", "MOhm", "GOhm"]
+    },
+    {
+      "vxna": ["✓", "✗", "N/A"],
+      "v": ["мВ", "В", "КВ"],
+      "a": ["µА", "мА", "А"],
+      "Ohm": ["µОм", "мОм", "Ом", "кОм", "МОм", "ГОм"]
+    }
+  ];
+  var form = {
+    'name': ['', ''],
+    'tag': tag,
+    'value': null
+  };
+  if (['text', 'float'].contains(type)) {
+    form.addAll({
+      'type': type,
+    });
+  } else if (['ohm', 'a', 'v'].contains(type)) {
+    form.addAll({
+      'type': 'float',
+      'postfix': type,
+      'postfix_ind': 2,
+    });
+  } else if (['vxna'].contains(type)) {
+    form.addAll({
+      'type': 'radio',
+      'radio_type': type,
+    });
+  } else if (type == 'date') {
+    form.addAll({
+      'type': 'date',
+    });
+  } else {
+    throw Exception('Invalid type: $type. tag: $tag');
+  }
+  return form;
+}
+
 // filename = 'a.docx'
 Future<Map> generateMap(String filename) async {
+  // ttype = ['text', 'longtext', 'float']
+  // tvalue = ['1', '2']
+  // rtype = ['vxna', 'pl']
+  // rvalue [2, 1]
+
   final file = File(filename);
   final bytes = await file.readAsBytes();
   final docx = await DocxTemplate.fromBytes(bytes);
@@ -37,38 +93,16 @@ Future<Map> generateMap(String filename) async {
   for (var tag in tags) {
     var tmp = splitAndCheckTag(tag);
     var type = tmp[0], formNumber = tmp[1];
-    types.add(type);
-    if (!forms.containsKey(formNumber)) {
-      forms[formNumber] = {
-        'name': ['', ''],
-        'type': 'list',
-        'fields': [],
-      };
-    }
-    forms[formNumber]['fields'].add({
-      'name': ['', ''],
-      'tag': tag,
-      'type': type,
-    });
+    var form = tagToForm(tag, type);
+    forms[formNumber]['fields'].add(form);
   }
   final formsList = [];
   final sortedKeys = forms.keys.toList();
-  sortedKeys.sort();
+  sortedKeys.sort(((a, b) => int.parse(a).compareTo(int.parse(b))));
   for (var key in sortedKeys) {
+    print('key: $key');
     formsList.add(forms[key]);
   }
-  final dropdowns = [
-    {
-      "vxna": ["✓", "✗", "N/A"],
-      "v": ["mV", "V", "KV"],
-      "a": ["microA", "mA", "A"]
-    },
-    {
-      "vxna": ["✓", "✗", "N/A"],
-      "v": ["мВ", "В", "КВ"],
-      "a": ["микроА", "мА", "А"]
-    }
-  ];
   // get any lang string from dropdowns
   for (var type in types) {
     if (dropdowns[0].containsKey(type)) {
@@ -97,11 +131,4 @@ void main() async {
   final map = await generateMap('../assets/docs/$docName.docx');
   await saveJson(map, '$docName.json');
   // print(jsonEncode(map));
-  final a = {
-    'tag': 'tag_1_text',
-    'type': 'text',
-    'value': 'this is text',
-    'dtype': 'vxna',
-    'dvalue': 'N/A',
-  };
 }

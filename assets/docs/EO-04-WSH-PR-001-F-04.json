@@ -1,0 +1,158 @@
+{
+  "langs": [
+    "en",
+    "ru"
+  ],
+  "version": "0.0.1",
+  "dropdown": [
+    {
+      "vxna": ["✓", "✗", "N/A"],
+      "Ohm": ["µOhm", "mOhm", "Ohm", "kOhm", "MOhm", "GOhm"]
+    },
+    {
+      "vxna": ["✓", "✗", "N/A"],
+      "Ohm": ["µОм", "мОм", "Ом", "кОм", "МОм", "ГОм"]
+    }
+  ],
+  "forms": [
+    {
+      "name": [
+        "General info",
+        "Общая информация"
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "Request №",
+            "Заявка №"
+          ],
+          "tag": "request_no_1_text",
+          "type": "text",
+          "value": "##AA##"
+        },
+        {
+          "name": [
+            "Equip Title:",
+            "Описание оборудования:"
+          ],
+          "tag": "equip_title_1_text",
+          "type": "text"
+        },
+        {
+          "name": [
+            "Equip No.:",
+            "Номер оборудования:"
+          ],
+          "tag": "equip_no_1_text",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": [
+        "Pre-test check",
+        "Проверка перед испытанием"
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "Ensure earthing conforms",
+            "Проверить соответствие заземления"
+          ],
+          "tag": "earthing_conforms_2_vxna",
+          "dtype": "vxna"
+        },
+        {
+          "name": [
+            "Confirm motor protection and control are checked.",
+            "Проверить, что защита электрического двигателя проверен"
+          ],
+          "tag": "motor_protection_2_vxna",
+          "dtype": "vxna"
+        },
+        {
+          "name": [
+            "Confirm that the protection relay setting corresponds to the motor current rating.",
+            "Подтвердить, что уставки реле защиты соответствуют номинальному значению тока для данного двигателя"
+          ],
+          "tag": "protection_relay_2_vxna",
+          "dtype": "vxna"
+        },
+        {
+          "name": [
+            "Confirm motor, heater and associated equipment has been isolated and locked off.",
+            "Подтвердить, что электродвигатель и соответст. оборудование отключено и изолировано"
+          ],
+          "tag": "isolation_2_vxna",
+          "dtype": "vxna"
+        },
+        {
+          "name": [
+            "Confirm repair of motor are complete.",
+            "Подтвердить завершение ремонта электродвигателя"
+          ],
+          "tag": "repair_complete_2_vxna",
+          "dtype": "vxna"
+        }
+      ]
+    },
+    {
+      "name": [
+        "Disconnect motor and heater. Measure and record winding resistance",
+        "Отключить двигатель и нагреватель.  Измерить и зарегистрировать сопротивление обмоток"
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "Y1-Y2 Beginning-ending [Ohm]",
+            "Y1-Y2 Начало-конец [Ом]"
+          ],
+          "tag": "y1_y2_3_float",
+          "type": "float",
+          "postfix": "Ohm",
+          "pvalue": 2
+        },
+        {
+          "name": [
+            "R1-R2 Beginning-ending [Ohm]",
+            "R1-R2 Начало-конец [Ом]"
+          ],
+          "tag": "r1_r2_3_float",
+          "type": "float",
+          "postfix": "Ohm",
+          "pvalue": 2
+        },
+        {
+          "name": [
+            "G1-G2 Beginning-ending [Ohm]",
+            "G1-G2 Начало-конец [Ом]"
+          ],
+          "tag": "g1_g2_3_float",
+          "type": "float",
+          "postfix": "Ohm",
+          "pvalue": 2
+        }
+      ]
+    },
+    {
+      "name": [
+        "Comments",
+        "Примечание"
+      ],
+      "type": "list",
+      "fields": [
+        {
+          "name": [
+            "",
+            ""
+          ],
+          "tag": "comments_12_text",
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
